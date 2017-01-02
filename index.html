@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Northwest League Stadiums</title>
+</head>
+<body>
+	<div id="map"></div>
+    <script>
+      var map;
+      function initMap() {
+        // Constructor creates a new map - only center and zoom are required.
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 45.432795, lng: -122.377449},
+          zoom: 13
+        });
+      }
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxXj3rb4K2dGGUVC-wvKyzuWNu5fo9Dns&v=3&callback=initMap">
+    </script>
+</body>
+</html>
