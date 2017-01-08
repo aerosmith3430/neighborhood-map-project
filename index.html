@@ -11,8 +11,31 @@
 		<div class="container">
       		<div class="filter">
         		<h1>Northwest League Stadiums</h1> 
-        		<p><em data-bind="text: firstName">text</em></p>
-        		<p><em data-bind="text: lastName">text</em></p>       		
+        		<!-- <p><em data-bind="text: firstName">text</em></p>
+        		<p><em data-bind="text: lastName">text</em></p>
+        		<p>First name: <input data-bind="value: firstName"></p>
+        		<p>Last name: <input data-bind="value: lastName"></p>
+        		<p>Full name: <strong data-bind="text: fullName"></strong></p>
+        		<button data-bind="click: capitalizeLastName">Go caps</button>		 -->
+        		<!-- <h2>Your seat reservations</h2>
+        		<table>
+        			<thead>
+        				<tr>
+        					<th>Passenger name</th>
+        					<th>Meal</th>
+        					<th>Surcharge</th>
+        				</tr>
+        			</thead>
+        			<tbody data-bind="foreach: seats">
+        				<tr>
+        					<td><input data-bind="value: name"></td>
+        					<td><select data-bind="options: $root.availableMeals, value: meal, optionsText: 'mealName'"></select></td>
+        					<td data-bind="text: formattedPrice"></td>		
+        				</tr>
+        			</tbody>
+        			<button data-bind="click: addSeat">Reserve another seat</button>
+        			<h3 data-bind="visible: totalSurcharge() > 0">Total surcharge: $<span data-bind="text: totalSurcharge().toFixed(2)"></span></h3>
+        		</table> -->        		
       		</div>
       		<div id="map"></div>
     	</div>	
