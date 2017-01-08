@@ -37,5 +37,10 @@ h1 {
   line-height: 35px;
   padding: 10px 10px 30px 10px;
   text-align: left;
-  width: 340px;
+  width: 340px;  
+}
+
+.filter ul {
+	list-style: none;
+	padding-left: 0;
 }
