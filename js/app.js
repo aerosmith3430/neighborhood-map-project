@@ -194,7 +194,13 @@ var ViewModel = function () {
 
     model.forEach(function(stadium) {
     	self.stadiumList.push( new View(stadium));
-    });     
+    }); 
+
+    self.searchFilter = ko.observable('');
+
+    self.filteredList = ko.computed(function() {
+    	
+    })
 
     /*function SeatReservation(name, initialMeal) {
 	    var self = this;
@@ -234,3 +240,54 @@ var ViewModel = function () {
 }
 
 ko.applyBindings(new ViewModel());
+
+/*myClickEventHandler = function(currentItem) {
+     var index = currentItem.id;
+     var marker = markers[index];
+     google.maps.event.trigger(marker, 'click');
+     console.log("hi");
+}
+
+
+var Location = function(data){
+        this.title =ko.observable(data.title);
+        this.location = ko.observable(data.location);
+        this.marker = ko.observable(data.marker);
+      };
+
+
+//viewmodel
+var ViewModel = function(){
+
+    var self= this;
+    self.filter = ko.observable('');
+
+    this.placesArray = ko.observableArray([]);
+     locations.forEach(function(locItem){
+        self.placesArray.push(new Location(locItem));
+    });
+
+// function for filtering using knockout
+     self.filteredItems = ko.computed(function() {
+    var filter = this.filter().toLowerCase();// to convert to lowercase.
+
+    if (!filter) {
+        markervisible();//show all markers
+
+         return self.placesArray();
+        }// if filter() is empty return the list view.
+
+     else {
+        return ko.utils.arrayFilter(locations, function(item) {
+                var visibleplaces = item.title.toLowerCase().indexOf(filter)!==-1;
+                 item.marker.setVisible(visibleplaces); // display the filtered markers
+                return visibleplaces;
+        });
+    }
+
+}, self);
+
+           self.placesArray().forEach(function(myItem, index) {
+        // console.log(filteredItems());
+    myItem.id = index;
+});*/
