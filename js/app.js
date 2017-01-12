@@ -190,11 +190,29 @@ var View = function(data) {
 var ViewModel = function() {
     var self = this;
 
-    self.stadiumList = ko.observableArray([]);
+    self.stadiumList = ko.observableArray();
 
     model.forEach(function(stadium) {
     	self.stadiumList.push( new View(stadium));
-    }); 
+    });  
+    
+    self.searchBarInput = ko.observable('');
+    self.updateMap = ko.observableArray();
+    self.markersOnMap = ko.observableArray(markers);
+
+    self.listFilter = ko.computed(function() {
+    	var userInput = self.searchBarInput().toLowerCase();
+
+    	self.updateMap.removeAll();
+
+    	self.markersOnMap().forEach(function(stadium) {
+    		stadium.setVisible(false);
+			if (stadium.title.toLowerCase().indexOf(userInput) !== -1) {
+				stadium.setVisible(true);
+				self.updateMap.push(stadium);
+			}
+    	});
+    });
 
     /*function SeatReservation(name, initialMeal) {
 	    var self = this;
@@ -234,22 +252,3 @@ var ViewModel = function() {
 }
 
 ko.applyBindings(new ViewModel());
-
-/*self.showList = ko.observable(true);
-self.search = ko.computed(function() {
-  self.query = ko.observable('');
-  var userInput = self.query().toLowerCase();
-      for (var i = 0; i < self.locationList().length; i++) {
-        var userInputIsInTitle = self.locationList()[i].title.toLowerCase();
-        if (userInputIsInTitle.indexOf(userInput) >= 0) {
-            self.locationList()[i].showList(true);
-            if (self.locationList()[i].marker) {
-                self.locationList()[i].marker.setVisible(true);
-            }
-        } else {
-            self.locationList()[i].showList(false);
-            if (self.locationList()[i].marker) {
-                self.locationList()[i].marker.setVisible(false);
-            }
-          }
-     });*/
