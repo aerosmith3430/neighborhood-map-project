@@ -197,48 +197,32 @@ var ViewModel = function() {
     });  
     
     self.searchBarInput = ko.observable('');
-    self.updateMap = ko.observableArray();
+    self.listItems = ko.observableArray(model);
     self.markersOnMap = ko.observableArray(markers);
 
     self.listFilter = ko.computed(function() {
+    	return ko.utils.arrayFilter(self.listItems(), function(stadium) {
+    		return stadium.title.toLowerCase().indexOf(self.searchBarInput().toLowerCase()) >= 0;    		
+    	});
+    });
+
+    /*self.listFilter = ko.computed(function() {
     	var userInput = self.searchBarInput().toLowerCase();
 
-    	self.updateMap.removeAll();
+    	self.markersOnMap.removeAll();
 
     	self.markersOnMap().forEach(function(stadium) {
     		stadium.setVisible(false);
 			if (stadium.title.toLowerCase().indexOf(userInput) !== -1) {
 				stadium.setVisible(true);
-				self.updateMap.push(stadium);
+				self.markersOnMap.push(stadium);
 			}
     	});
-    });
-
-    /*
-	var places = [ 
-  {"title" : "apple"},
-  {"title" : "lemon"},
-  {"title" : "orange"}
-];
-
-var viewModel = function() {
-  var self = this;
-
-  self.points = ko.observableArray(places);
-
-  self.query = ko.observable('');
-
-  self.search = ko.computed(function(){
-    return ko.utils.arrayFilter(self.points(), function(point){
-      return point.title.toLowerCase().indexOf(self.query().toLowerCase()) >= 0;
-    });
-  });
-}; 
-
-ko.applyBindings(new viewModel());
+    });*/
 
 
-    function SeatReservation(name, initialMeal) {
+
+    /*function SeatReservation(name, initialMeal) {
 	    var self = this;
 	    self.name = name;
 	    self.meal = ko.observable(initialMeal);
