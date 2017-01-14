@@ -109,7 +109,7 @@ var model = [
 	{title: 'Spokane Indians', location: {lat: 47.662716, lng: -117.346912}},
 	{title: 'Everett Aquasox', location: {lat: 47.967024, lng: -122.201513}},
 	{title: 'Vancouver Canadians', location: {lat: 49.243227, lng: -123.105238}}
-]
+];
 
 /*var ViewModel = function () {
 	this.firstName = ko.observable("Bert");
@@ -141,10 +141,11 @@ function initMap() {
 	var bounds = new google.maps.LatLngBounds();
 
     // The following group uses the location array to create an array of markers on initialize.
-	for (var i = 0; i < model.length; i++) {
+    // Use vm.listItems() to loop directly over the observable array
+	for (var i = 0; i < vm.listItems().length; i++) {
 	// Get the position from the location array.
-		var position = model[i].location;
-		var title = model[i].title;
+		var position = vm.listItems()[i].location;
+		var title = vm.listItems()[i].title;
 	// Create a marker per location, and put into markers array.
 		var marker = new google.maps.Marker({
 			map: map,
@@ -155,6 +156,10 @@ function initMap() {
 		});
 		// Push the marker to our array of markers.
 		markers.push(marker);
+
+		// Create 'marker' property in the location object
+		// Store the marker there
+		vm.listItems()[i].marker = marker;
 		// Create an onclick event to open an infowindow at each marker.
 		marker.addListener('click', function() {
 		populateInfoWindow(this, largeInfowindow);
@@ -194,33 +199,40 @@ var ViewModel = function() {
 
     model.forEach(function(stadium) {
     	self.stadiumList.push( new View(stadium));
-    });  
+    });
     
     self.searchBarInput = ko.observable('');
     self.listItems = ko.observableArray(model);
-    self.markersOnMap = ko.observableArray(markers);
 
     self.listFilter = ko.computed(function() {
     	return ko.utils.arrayFilter(self.listItems(), function(stadium) {
-    		return stadium.title.toLowerCase().indexOf(self.searchBarInput().toLowerCase()) >= 0;    		
+    		if ( stadium.title.toLowerCase().indexOf( self.searchBarInput().toLowerCase() ) >= 0 ) {
+    			
+    			// If the marker exists and is an object
+    			if (typeof stadium.marker === 'object') {
+    				// show the marker
+    				stadium.marker.setVisible(true);
+    			}
+    			// show this location
+    			return true;
+    		} else {
+    			
+    			if (typeof stadium.marker === 'object') {
+    				// hide the marker
+    				stadium.marker.setVisible(false);
+    			}
+    			return false;
+    		}
     	});
     });
 
-    /*self.listFilter = ko.computed(function() {
-    	var userInput = self.searchBarInput().toLowerCase();
-
-    	self.markersOnMap.removeAll();
-
-    	self.markersOnMap().forEach(function(stadium) {
-    		stadium.setVisible(false);
-			if (stadium.title.toLowerCase().indexOf(userInput) !== -1) {
-				stadium.setVisible(true);
-				self.markersOnMap.push(stadium);
-			}
-    	});
-    });*/
-
-
+    self.clickAnimation = function(stadium) {
+    	google.maps.event.trigger(stadium.marker, 'click');
+    	stadium.marker.setAnimation(google.maps.Animation.BOUNCE);
+    	setTimeout(function() {
+    		stadium.marker.setAnimation(null);    		
+    	}, 1500);
+    };
 
     /*function SeatReservation(name, initialMeal) {
 	    var self = this;
@@ -259,4 +271,9 @@ var ViewModel = function() {
     });*/
 }
 
-ko.applyBindings(new ViewModel());
+// Create a global variable to store the ViewModel object
+var vm = new ViewModel();
+// Apply bindings, passing the ViewModel object as a parameter
+ko.applyBindings(vm);
+
+
