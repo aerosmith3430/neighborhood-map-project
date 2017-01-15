@@ -15,6 +15,10 @@
         		<ul data-bind="foreach: listFilter()">
         			<li data-bind="text: title, click: $parent.clickAnimation"></li>
         		</ul>
+        		<div class="wikipedia-container">
+        			<h3>Wikipedia articles</h3>
+        			<ul id="wikipedia-links"></ul>
+    			</div>
         		<!-- 	
 				<input id="s-input" class="controls" type="search" data-bind="textInput: query, valueUpdate: 'keyup'"></input>
 				<div id="listbx">
@@ -54,12 +58,12 @@
       		<div id="map"></div>
     	</div>	
 
-		<script type="text/javascript" src="js/knockout-3.4.1.js"></script>		
+		<script type="text/javascript" src="js/knockout-3.4.1.js"></script>
 		<script src="js/jquery-3.1.1.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/app.js"></script>
-		<script async defer
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxXj3rb4K2dGGUVC-wvKyzuWNu5fo9Dns&v=3&callback=initMap">
+		<script async defer type="text/javascript"
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDxXj3rb4K2dGGUVC-wvKyzuWNu5fo9Dns&v=3&libraries=geometry&callback=initMap">
 		</script>
 	</body>
 </html>

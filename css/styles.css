@@ -21,6 +21,12 @@ h1 {
   text-align: center;
 }
 
+.wikipedia-container {
+  font-size: 22px;
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
 #map {
   bottom:0px;
   height: 100%;

@@ -145,7 +145,8 @@ function initMap() {
 	for (var i = 0; i < vm.listItems().length; i++) {
 	// Get the position from the location array.
 		var position = vm.listItems()[i].location;
-		var title = vm.listItems()[i].title;
+		var title = vm.listItems()[i].title;		
+		
 	// Create a marker per location, and put into markers array.
 		var marker = new google.maps.Marker({
 			map: map,
@@ -162,27 +163,54 @@ function initMap() {
 		vm.listItems()[i].marker = marker;
 		// Create an onclick event to open an infowindow at each marker.
 		marker.addListener('click', function() {
-		populateInfoWindow(this, largeInfowindow);
+			populateInfoWindow(this, largeInfowindow);
 		});
 		bounds.extend(markers[i].position);
-		}
-		// Extend the boundaries of the map for each marker
-		map.fitBounds(bounds); 
-	};
+	}
+	// Extend the boundaries of the map for each marker
+	map.fitBounds(bounds); 
+}
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
-// Check to make sure the infowindow is not already opened on this marker.
+	// Check to make sure the infowindow is not already opened on this marker.
 	if (infowindow.marker != marker) {
-		infowindow.marker = marker;
-		infowindow.setContent('<div>' + marker.title + '</div>');
-		infowindow.open(map, marker);
-	// Make sure the marker property is cleared if the infowindow is closed.
-	infowindow.addListener('closeclick',function(){
-		infowindow.setMarker(null);
-		});
+		infowindow.setContent('<div>' + marker.title + '<div>');
+		infowindow.marker = marker;	
+		infowindow.open(map, marker);			
+		// Make sure the marker property is cleared if the infowindow is closed.
+		infowindow.addListener('closeclick', function() {
+			infowindow.marker = null;
+		});		
+		
+		/*var streetViewService = new google.maps.StreetViewService();
+		var radius = 50;
+
+		function getStreetView(data, status) {
+			if (status == google.maps.StreetViewStatus.OK) {
+				var nearStreetViewLocation = data.location.latLng;
+				console.log(nearStreetViewLocation);
+				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
+				console.log(heading);
+				infowindow.setContent('<div>' + marker.title + '<div><div id="pano"></div>');
+				var panoramaOptions = {
+					position: nearStreetViewLocation,
+					pov: {
+						heading: heading,
+						pitch: 30
+					}
+				};
+				console.log(panoramaOptions);			
+				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
+				console.log(panorama);				
+			} else {
+				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
+			}			
+		}
+		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+		infowindow.open(map, marker);*/
 	}
 }
 
@@ -233,6 +261,31 @@ var ViewModel = function() {
     		stadium.marker.setAnimation(null);    		
     	}, 1500);
     };
+
+    self.wikiAPI = function(data) { // setup data-bind
+    	/*var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
+
+	var wikiRequestTimeout = setTimeout(function() {
+        $wikiElem.text("Wikipedia articles failed to load");
+    }, 3000);
+
+    $.ajax({
+        url: wikiURL,
+        dataType: "jsonp",
+        success: function(response) {
+            var articleList = response[1];
+            for (var i = 0; i < articleList.length; i++) {
+                wikiArticle = articleList[i];
+                var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
+                $wikiElem.append('<li><a target="_blank" href="' + url + '">' + wikiArticle + '</a></li>');
+            };
+
+            clearTimeout(wikiRequestTimeout);
+        }
+    });
+
+    return false;*/
+	};
 
     /*function SeatReservation(name, initialMeal) {
 	    var self = this;
