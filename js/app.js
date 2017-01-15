@@ -214,6 +214,30 @@ function populateInfoWindow(marker, infowindow) {
 	}
 }
 
+var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + model[0].title + '&format=json&callback=wikiCallback';
+
+var wikiRequestTimeout = setTimeout(function() {
+        $wikiElem.text("Wikipedia articles failed to load");
+    }, 3000);
+
+$.ajax({
+    url: wikiURL,
+    dataType: "jsonp",
+    success: function(response) {
+        var articleList = response[1];
+        for (var i = 0; i < articleList.length; i++) {
+            wikiArticle = articleList[i];
+            var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
+            $('#wikipedia-links').append('<li><a target="_blank" href="' + url + '">' + wikiArticle + '</a></li>');
+        };
+
+        clearTimeout(wikiRequestTimeout);
+    }
+});
+
+//return false;
+
+
 var View = function(data) {
 	var self = this;
 
@@ -262,10 +286,10 @@ var ViewModel = function() {
     	}, 1500);
     };
 
-    self.wikiAPI = function(data) { // setup data-bind
-    	/*var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
-
-	var wikiRequestTimeout = setTimeout(function() {
+	 // setup data-bind
+    	//var url = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + stadiumList().title + '&format=json&callback=wikiCallback';
+    
+	/*var wikiRequestTimeout = setTimeout(function() {
         $wikiElem.text("Wikipedia articles failed to load");
     }, 3000);
 
@@ -285,8 +309,7 @@ var ViewModel = function() {
     });
 
     return false;*/
-	};
-
+	
     /*function SeatReservation(name, initialMeal) {
 	    var self = this;
 	    self.name = name;
