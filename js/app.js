@@ -66,18 +66,24 @@ function populateInfoWindow(marker, infowindow) {
 		// Make sure the marker property is cleared if the infowindow is closed.
 		infowindow.addListener('closeclick', function() {
 			infowindow.marker = null;
-		});		
-		
-		/*var streetViewService = new google.maps.StreetViewService();
+		});	
+
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+    	setTimeout(function() {
+    		marker.setAnimation(null);    		
+    	}, 1500);	
+		/*
+		var streetViewService = new google.maps.StreetViewService();
 		var radius = 50;
 
 		function getStreetView(data, status) {
+			console.log(status, data);
 			if (status == google.maps.StreetViewStatus.OK) {
 				var nearStreetViewLocation = data.location.latLng;
 				console.log(nearStreetViewLocation);
 				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
 				console.log(heading);
-				infowindow.setContent('<div>' + marker.title + '<div><div id="pano"></div>');
+				infowindow.setContent('<div>' + marker.title + '</div><div id="pano"><img src="https://maps.googleapis.com/maps/api/streetview?size=400x400&location=' + marker.position + '&key=AIzaSyDxXj3rb4K2dGGUVC-wvKyzuWNu5fo9Dns"></div>');
 				var panoramaOptions = {
 					position: nearStreetViewLocation,
 					pov: {
@@ -85,9 +91,7 @@ function populateInfoWindow(marker, infowindow) {
 						pitch: 30
 					}
 				};
-				console.log(panoramaOptions);			
-				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);
-				console.log(panorama);				
+				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);		
 			} else {
 				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
 			}			
@@ -95,39 +99,47 @@ function populateInfoWindow(marker, infowindow) {
 		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
 		infowindow.open(map, marker);*/
 	}
+
+	var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
+
+	var wikiRequestTimeout = setTimeout(function() {
+	        $('#wikipedia-links').text("Wikipedia articles failed to load");
+	    }, 3000);
+
+	$.ajax({
+	    url: wikiURL,
+	    dataType: "jsonp",
+	    success: function(response) {
+	    	console.log(response);
+	        var articleList = response[1];
+	        for (var i = 0; i < articleList.length; i++) {
+	            wikiArticle = articleList[i];
+	            var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
+	            infowindow.setContent('<h4>' + marker.title + '</h4><h6>Click link for Wikipedia entry</h6><a target="_blank" href="' + url + '">' + wikiArticle + '</a>');
+	        };
+
+	        clearTimeout(wikiRequestTimeout);
+	    }
+	});
 }
-
-var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + model[0].title + '&format=json&callback=wikiCallback';
-
-var wikiRequestTimeout = setTimeout(function() {
-        $('#wikipedia-links').text("Wikipedia articles failed to load");
-    }, 3000);
-
-$.ajax({
-    url: wikiURL,
-    dataType: "jsonp",
-    success: function(response) {
-        var articleList = response[1];
-        for (var i = 0; i < articleList.length; i++) {
-            wikiArticle = articleList[i];
-            var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
-            $('#wikipedia-links').append('<li><a target="_blank" href="' + url + '">' + wikiArticle + '</a></li>');
-        };
-
-        clearTimeout(wikiRequestTimeout);
-    }
-});
 
 var View = function(data) {
 	var self = this;
 
 	self.title = ko.observable(data.title);
+
+	/*menu.addEventListener('click', function(e) {
+		drawer.classList.toggle('open');
+		e.stopPropagation();
+	});*/
 }
 
 var ViewModel = function() {
     var self = this;
 
     self.stadiumList = ko.observableArray();
+
+    self.wikiData = ko.observable('');
 
     model.forEach(function(stadium) {
     	self.stadiumList.push( new View(stadium));
@@ -160,10 +172,6 @@ var ViewModel = function() {
 
     self.clickAnimation = function(stadium) {
     	google.maps.event.trigger(stadium.marker, 'click');
-    	stadium.marker.setAnimation(google.maps.Animation.BOUNCE);
-    	setTimeout(function() {
-    		stadium.marker.setAnimation(null);    		
-    	}, 1500);
     };
 }
 
