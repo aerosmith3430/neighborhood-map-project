@@ -4,65 +4,40 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<link rel="stylesheet" href="css/styles.css">		
+		<link rel="stylesheet" href="css/styles.css">			
 		<title>Northwest League Stadiums</title>
 	</head>
 	<body>
-		<div class="container">			
-			<!-- <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        		<path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
-  			</svg></a> -->
-      		<div class="filter">
-        		<h1>Northwest League Stadiums</h1>        		
-        		<input id="search-bar" placeholder="Search" data-bind="textInput: searchBarInput, valueUpdate: 'keyup'">
-        		<ul data-bind="foreach: listFilter()">
-        			<li data-bind="text: title, click: $parent.clickAnimation"></li>
-        		</ul>
-        		<!-- <div class="wikipedia-container">
-        			<h3>Wikipedia articles</h3>
-        			<ul id="wikipedia-links">
-                        <li><a href="#" data-bind="text: wikiData"></a></li>
-                    </ul>
-    			</div> -->
-        		<!-- 	
-				<input id="s-input" class="controls" type="search" data-bind="textInput: query, valueUpdate: 'keyup'"></input>
-				<div id="listbx">
-				<h2>Sites</h2>
-				<div>
-				<ul data-bind="foreach: search()">
-				<li data-bind="text: title"></li>
-				</ul>
-				</div>
-				</div>
-	<p><em data-bind="text: firstName">text</em></p>
-        		<p><em data-bind="text: lastName">text</em></p>
-        		<p>First name: <input data-bind="value: firstName"></p>
-        		<p>Last name: <input data-bind="value: lastName"></p>
-        		<p>Full name: <strong data-bind="text: fullName"></strong></p>
-        		<button data-bind="click: capitalizeLastName">Go caps</button>		 -->
-        		<!-- <h2>Your seat reservations</h2>
-        		<table>
-        			<thead>
-        				<tr>
-        					<th>Passenger name</th>
-        					<th>Meal</th>
-        					<th>Surcharge</th>
-        				</tr>
-        			</thead>
-        			<tbody data-bind="foreach: seats">
-        				<tr>
-        					<td><input data-bind="value: name"></td>
-        					<td><select data-bind="options: $root.availableMeals, value: meal, optionsText: 'mealName'"></select></td>
-        					<td data-bind="text: formattedPrice"></td>		
-        				</tr>
-        			</tbody>
-        			<button data-bind="click: addSeat">Reserve another seat</button>
-        			<h3 data-bind="visible: totalSurcharge() > 0">Total surcharge: $<span data-bind="text: totalSurcharge().toFixed(2)"></span></h3>
-        		</table> -->        		
-  			</div>      		
-      		<div id="map"></div>
+		<div class="container">			  			
+			<nav id="drawer" class="filter">
+	    		<h1>Northwest League Stadiums</h1>        		
+	    		<input id="search-bar" placeholder="Search" data-bind="textInput: searchBarInput, valueUpdate: 'keyup'">
+	    		<ul data-bind="foreach: listFilter()">
+	    			<li data-bind="text: title, click: $parent.clickAnimation"></li>
+	    		</ul>		       		
+			</nav>
+			<main>
+				<div id="menu">
+					<button type="button" class="btn btn-default">
+						<a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+	        			<path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+	  					</svg></a>
+					</button>
+				</div>				
+				<div id="map"></div>
+			</main>							 			    		
     	</div>	
 
+    	<script>
+	        // Credit to Udacity off-design course
+	        var menu = document.getElementById('menu');
+	        var main = document.querySelector('main');
+	        var drawer = document.getElementById('drawer');
+	        menu.addEventListener('click', function(e) {
+	            drawer.classList.toggle('open');
+	            e.stopPropagation();
+	        });	        
+    	</script>
 		<script type="text/javascript" src="js/knockout-3.4.1.js"></script>
 		<script src="js/jquery-3.1.1.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>

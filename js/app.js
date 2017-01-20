@@ -172,6 +172,7 @@ var ViewModel = function() {
 
     self.clickAnimation = function(stadium) {
     	google.maps.event.trigger(stadium.marker, 'click');
+    	drawer.classList.remove('open');    	
     };
 }
 
