@@ -1,4 +1,4 @@
-To run this project, click [here](https://aerosmith3430.github.io/neighborhood-map-project).
+To run this project, open the `index.html` file.  The map will load in the browser.
 
 ##Neighborhood map
 
