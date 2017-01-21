@@ -47,16 +47,18 @@ h1 {
 }
 
 #menu button {
-	width: 40px;
+	width: 35px;
 }
+
+/* Styles incorporated from Udacity off-canvas course*/
 
 nav {
 	z-index: 1;
 	width: 340px;
 	height: 100%;
 	position: absolute;
-	-webkit-transform: translate(-340px, 0);
-	transform: translate(-340px, 0);
+	-webkit-transform: translate(-400px, 0);
+	transform: translate(-400px, 0);
 	transition: transform 0.3s ease;
 }
 

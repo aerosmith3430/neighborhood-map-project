@@ -1,3 +1,5 @@
+// Model holds location data
+
 var model = [
 	{title: 'Hillsboro Hops', location: {lat: 45.554389, lng: -122.908428}},
 	{title: 'Salem-Keizer Volcanoes', location: {lat: 45.016184, lng: -122.998177}},
@@ -9,8 +11,14 @@ var model = [
 	{title: 'Vancouver Canadians', location: {lat: 49.243227, lng: -123.105238}}
 ];
 
+// Declare variables in the global scope
 var map;
 var markers = [];
+var menu = document.getElementById('menu');
+var main = document.querySelector('main');
+var drawer = document.getElementById('drawer');
+
+// Credit to Udacity Google Map API course
 
 function initMap() {
 	// Constructor creates a new map - only center and zoom are required.
@@ -38,7 +46,7 @@ function initMap() {
 			animation: google.maps.Animation.DROP,
 			id: i
 		});
-		// Push the marker to our array of markers.
+		// Push the marker to the array of markers.
 		markers.push(marker);
 
 		// Create 'marker' property in the location object
@@ -68,49 +76,26 @@ function populateInfoWindow(marker, infowindow) {
 			infowindow.marker = null;
 		});	
 
+		// Animates marker and stops animation after 1.5 seconds
 		marker.setAnimation(google.maps.Animation.BOUNCE);
     	setTimeout(function() {
     		marker.setAnimation(null);    		
-    	}, 1500);	
-		/*
-		var streetViewService = new google.maps.StreetViewService();
-		var radius = 50;
-
-		function getStreetView(data, status) {
-			console.log(status, data);
-			if (status == google.maps.StreetViewStatus.OK) {
-				var nearStreetViewLocation = data.location.latLng;
-				console.log(nearStreetViewLocation);
-				var heading = google.maps.geometry.spherical.computeHeading(nearStreetViewLocation, marker.position);
-				console.log(heading);
-				infowindow.setContent('<div>' + marker.title + '</div><div id="pano"><img src="https://maps.googleapis.com/maps/api/streetview?size=400x400&location=' + marker.position + '&key=AIzaSyDxXj3rb4K2dGGUVC-wvKyzuWNu5fo9Dns"></div>');
-				var panoramaOptions = {
-					position: nearStreetViewLocation,
-					pov: {
-						heading: heading,
-						pitch: 30
-					}
-				};
-				var panorama = new google.maps.StreetViewPanorama(document.getElementById('pano'), panoramaOptions);		
-			} else {
-				infowindow.setContent('<div>' + marker.title + '</div>' + '<div>No Street View Found</div>');
-			}			
-		}
-		streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-		infowindow.open(map, marker);*/
+    	}, 1500);					
 	}
 
+	// URL for Wikipedia API request
 	var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
 
+	// If Wikipedia articles do not load within 3 seconds, an error message displays in the infowindow
 	var wikiRequestTimeout = setTimeout(function() {
-	        $('#wikipedia-links').text("Wikipedia articles failed to load");
+	        infowindow.setContent('<h4>' + marker.title + '</h4><h6>Wikipedia articles failed to load</h6>');
 	    }, 3000);
 
+	// AJAX request to Wikipedia API.  It takes in the URL defined above and, if successful, returns articles and creates an infowindow with the list name and a link
 	$.ajax({
 	    url: wikiURL,
 	    dataType: "jsonp",
-	    success: function(response) {
-	    	console.log(response);
+	    success: function(response) {	    	
 	        var articleList = response[1];
 	        for (var i = 0; i < articleList.length; i++) {
 	            wikiArticle = articleList[i];
@@ -123,31 +108,37 @@ function populateInfoWindow(marker, infowindow) {
 	});
 }
 
+// Opens list drawer when the hamburger icon is clicked
+menu.addEventListener('click', function(e) {
+	drawer.classList.toggle('open');
+	e.stopPropagation();
+});
+
+// The view handles what the user sees
 var View = function(data) {
 	var self = this;
 
-	self.title = ko.observable(data.title);
-
-	/*menu.addEventListener('click', function(e) {
-		drawer.classList.toggle('open');
-		e.stopPropagation();
-	});*/
+	self.title = ko.observable(data.title);	
 }
 
+// The ViewModel handles the communication between the model data and the view that the user sees
 var ViewModel = function() {
+	// Helps to avoid confusion as to which object is being referred to
     var self = this;
 
     self.stadiumList = ko.observableArray();
 
     self.wikiData = ko.observable('');
 
+    // Creates a new View object for each item in the model array and pushes it to the stadiumList observable array created above
     model.forEach(function(stadium) {
     	self.stadiumList.push( new View(stadium));
     });
     
-    self.searchBarInput = ko.observable('');
-    self.listItems = ko.observableArray(model);
+    self.searchBarInput = ko.observable(''); // Watches for input in the search bar
+    self.listItems = ko.observableArray(model); // Copies from the model into an observable array
 
+    // Watches for input in the search bar and displays the items that match the search criteria and hides those that do not meet the search criteria
     self.listFilter = ko.computed(function() {
     	return ko.utils.arrayFilter(self.listItems(), function(stadium) {
     		if ( stadium.title.toLowerCase().indexOf( self.searchBarInput().toLowerCase() ) >= 0 ) {
@@ -170,8 +161,9 @@ var ViewModel = function() {
     	});
     });
 
+    // Animates the marker when the list item is clicked. Also closes the drawer if it is open after list item is clicked.
     self.clickAnimation = function(stadium) {
-    	google.maps.event.trigger(stadium.marker, 'click');
+    	google.maps.event.trigger(stadium.marker, 'click');    	
     	drawer.classList.remove('open');    	
     };
 }
