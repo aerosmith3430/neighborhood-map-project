@@ -59,9 +59,14 @@ function initMap() {
 		bounds.extend(markers[i].position);
 	}
 	// Extend the boundaries of the map for each marker
-	map.fitBounds(bounds); 
+	google.maps.event.addDomListener(window, 'resize', function() {
+		map.fitBounds(bounds);
+	});
 }
 
+function googleMapError() {
+	alert("Google Maps failed to load");
+}
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -80,32 +85,26 @@ function populateInfoWindow(marker, infowindow) {
 		marker.setAnimation(google.maps.Animation.BOUNCE);
     	setTimeout(function() {
     		marker.setAnimation(null);    		
-    	}, 1500);					
+    	}, 1400);					
 	}
 
 	// URL for Wikipedia API request
 	var wikiURL = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
 
-	// If Wikipedia articles do not load within 3 seconds, an error message displays in the infowindow
-	var wikiRequestTimeout = setTimeout(function() {
-	        infowindow.setContent('<h4>' + marker.title + '</h4><h6>Wikipedia articles failed to load</h6>');
-	    }, 3000);
-
-	// AJAX request to Wikipedia API.  It takes in the URL defined above and, if successful, returns articles and creates an infowindow with the list name and a link
+	// AJAX request to Wikipedia API.  It takes in the URL defined above and, if successful, returns articles and creates an infowindow with the list name and a link. If Wikipedia articles do not load, an error message displays in the infowindow
 	$.ajax({
 	    url: wikiURL,
-	    dataType: "jsonp",
-	    success: function(response) {	    	
-	        var articleList = response[1];
-	        for (var i = 0; i < articleList.length; i++) {
-	            wikiArticle = articleList[i];
-	            var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
-	            infowindow.setContent('<h4>' + marker.title + '</h4><h6>Click link for Wikipedia entry</h6><a target="_blank" href="' + url + '">' + wikiArticle + '</a>');
-	        };
-
-	        clearTimeout(wikiRequestTimeout);
-	    }
-	});
+	    dataType: "jsonp"	    
+	}).done(function (response) {	    	
+        var articleList = response[1];
+        for (var i = 0; i < articleList.length; i++) {
+            wikiArticle = articleList[i];
+            var url = 'http://en.wikipedia.org/wiki/' + wikiArticle;
+            infowindow.setContent('<h4>' + marker.title + '</h4><h6>Click link for Wikipedia entry</h6><a target="_blank" href="' + url + '">' + wikiArticle + '</a>');
+        };	        
+    }).fail(function (jqXHR, textStatus) {
+    	infowindow.setContent('<h4>' + marker.title + '</h4><h6>Wikipedia articles failed to load</h6>');
+    });
 }
 
 // Opens list drawer when the hamburger icon is clicked
@@ -115,16 +114,16 @@ menu.addEventListener('click', function(e) {
 });
 
 // The view handles what the user sees
-var View = function(data) {
+var View = function(data) {	
 	var self = this;
 
-	self.title = ko.observable(data.title);	
+	self.title = ko.observable(data.title);
 }
 
 // The ViewModel handles the communication between the model data and the view that the user sees
 var ViewModel = function() {
 	// Helps to avoid confusion as to which object is being referred to
-    var self = this;
+    var self = this;    	
 
     self.stadiumList = ko.observableArray();
 
